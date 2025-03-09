@@ -1,29 +1,28 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace DemoLifetime
+namespace DemoLifetime;
+
+internal class DIApp : IHostedService
 {
-    internal class DIApp : IHostedService
+    private ProductContext _productContext;
+
+    public DIApp(ProductContext productContext)
     {
-        private ProductContext _productContext;
+        _productContext = productContext;
+    }
 
-        public DIApp(ProductContext productContext)
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        
+        foreach (var brand in _productContext.Brands)
         {
-            _productContext = productContext;
+            Console.WriteLine(brand.Name);
         }
+        return Task.CompletedTask;
+    }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            
-            foreach (var brand in _productContext.Brands)
-            {
-                Console.WriteLine(brand.Name);
-            }
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

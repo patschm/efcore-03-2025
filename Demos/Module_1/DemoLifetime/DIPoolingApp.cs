@@ -1,29 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
-namespace DemoLifetime
+namespace DemoLifetime;
+
+internal class DIPoolingApp : IHostedService
 {
-    internal class DIPoolingApp : IHostedService
+    private ProductContext _context;
+
+    public DIPoolingApp(ProductContext context)
     {
-        private ProductContext _context;
+        _context = context;
+    }
 
-        public DIPoolingApp(ProductContext context)
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        foreach (var brand in _context.Brands)
         {
-            _context = context;
+           // Console.WriteLine(brand.Name);
         }
+        return Task.CompletedTask;
+    }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            foreach (var brand in _context.Brands)
-            {
-               // Console.WriteLine(brand.Name);
-            }
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

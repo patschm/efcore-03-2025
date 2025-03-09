@@ -1,32 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
-namespace DemoLifetime
+namespace DemoLifetime;
+
+internal class DIFactoryApp : IHostedService
 {
-    internal class DIFactoryApp : IHostedService
+    private IDbContextFactory<ProductContext> _contextFactory;
+
+    public DIFactoryApp(IDbContextFactory<ProductContext> contextFactory)
     {
-        private IDbContextFactory<ProductContext> _contextFactory;
+        _contextFactory = contextFactory;
+    }
 
-        public DIFactoryApp(IDbContextFactory<ProductContext> contextFactory)
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        using (var productContext = _contextFactory.CreateDbContext())
         {
-            _contextFactory = contextFactory;
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            using (var productContext = _contextFactory.CreateDbContext())
+            foreach (var brand in productContext.Brands)
             {
-                foreach (var brand in productContext.Brands)
-                {
-                    Console.WriteLine(brand.Name);
-                }
+                Console.WriteLine(brand.Name);
             }
-            return Task.CompletedTask;
         }
+        return Task.CompletedTask;
+    }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

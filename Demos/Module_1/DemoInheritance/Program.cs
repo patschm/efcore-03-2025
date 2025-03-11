@@ -16,16 +16,22 @@ internal class Program
     {
         var optionsBuilder = new DbContextOptionsBuilder();
         optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.LogTo(Console.WriteLine);
         var context = new MyContext(optionsBuilder.Options);
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
-   
-        //foreach (var review in context.WebReviews)
-        foreach (var review in context.Reviews.OfType<WebReview>())
-        {
-            Console.WriteLine(review.ReviewType);
 
+        //foreach (var review in context.WebReviews)
+        //foreach (var review in context.Reviews.OfType<WebReview>())
+        //{
+        //    Console.WriteLine(review.ReviewType);
+
+        //}
+
+        foreach (ConsumerReview cr in context.ConsumerReviews)
+        {
         }
+
     }
 }

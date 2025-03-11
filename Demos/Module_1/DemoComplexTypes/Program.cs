@@ -8,8 +8,8 @@ internal class Program
 
     static void Main(string[] args)
     {
-        //DemoComplex();
-        DemoPrimitiveCollections();
+        DemoComplex();
+        //DemoPrimitiveCollections();
     }
 
     private static void DemoPrimitiveCollections()
@@ -47,7 +47,8 @@ internal class Program
         {
             Email = "hans@blah.nl",
             Name = "Hans",
-            Credentials = new ReviewerCredential("Hans", "SHA1", "Salty")
+            Credentials = new ReviewerCredential("Hans", "SHA1", "Salty"),
+            AssignedNumbers = [1,2,3,4]
         };
         var r2 = new Reviewer
         {

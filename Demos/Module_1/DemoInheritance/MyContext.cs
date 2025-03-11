@@ -46,7 +46,7 @@ internal class MyContext : DbContext
                 .WithOne()
                 .HasForeignKey<ReviewerCredential>(r => r.Id);
         });
-       
+
         SeedData(modelBuilder);
     }
 

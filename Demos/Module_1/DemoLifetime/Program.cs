@@ -11,11 +11,11 @@ internal class Program
 
     static void Main(string[] args)
     {
-        //DemoOptions();
+        DemoOptions();
         //DemoDirectInit();
         //DemoDI_Init();
         //DemoFactoryInit();
-        DemoPooling();
+       //DemoPooling();
     }
 
     
@@ -80,13 +80,13 @@ internal class Program
     private static void DemoPooling()
     {
         // Direct
-        //var options = new DbContextOptionsBuilder<ProductContext>()
-        //    .UseSqlServer(connectionString).Options;
-        //var factory = new PooledDbContextFactory<ProductContext>(options);
-        //using (var ctx = factory.CreateDbContext())
-        //{
+        var options = new DbContextOptionsBuilder<ProductContext>()
+            .UseSqlServer(connectionString).Options;
+        var factory = new PooledDbContextFactory<ProductContext>(options);
+        using (var ctx = factory.CreateDbContext())
+        {
 
-        //}
+        }
 
         Host.CreateDefaultBuilder()
           .ConfigureServices(svcs => {

@@ -1,4 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Formats.Tar;
+using System.Net.WebSockets;
+using System.Transactions;
 
 namespace Queries;
 
@@ -19,9 +23,62 @@ internal class Program
         //ViaLinq(context);
         //ViaRaw(context);
         //NaviLeanAndMaen(context);
-        EagerLoading(context);
+        //EagerLoading(context);
+
+        OnderzoekChangeTracker(context);
 
         Console.ReadLine();
+    }
+
+    private static void OnderzoekChangeTracker(ShopDatabaseContext context)
+    {
+        var pg = new ProductGroup
+        {
+            Name = "Hello World",
+            Image = "Hello.jpg"
+        };
+
+        EntityEntry state;// = context.Entry(pg);
+        {
+            var pg2 = context.ProductGroups.OrderBy(p => p.Id).LastOrDefault();
+            state = context.Entry(pg2);
+        }
+
+        Console.WriteLine(state.State);
+        pg.Name = "Hello Again";
+        //context.ProductGroups.Add(pg);
+
+        //context.Remove(pg);
+        Console.WriteLine(context.Entry(pg).State);
+        Console.WriteLine(context.Entry(pg).OriginalValues["Name"]);
+        Console.WriteLine(context.Entry(pg).CurrentValues["Name"]);
+
+        //context.Entry(pg).GetDatabaseValues();
+
+        //context.Entry(pg).DetectChanges();
+
+        int nrOfMods =  context.SaveChanges();
+        Console.WriteLine(context.Entry(pg).State);
+        Console.WriteLine(context.Entry(pg).OriginalValues["Name"]);
+        Console.WriteLine(context.Entry(pg).CurrentValues["Name"]);
+
+        //Console.WriteLine(nrOfMods);
+        //context.ProductGroups.ToList();
+        //string test = context.ProductGroups.ToList().First().Name;
+        //context.ProductGroups.ToList().First().Name = "Hoi";
+        //context.ProductGroups.ToList().First().Name = test;
+
+        //pg.Name = "Oei";
+
+        //context.Remove(pg);
+        //context.SaveChanges();
+        foreach (var tentry in context.ChangeTracker.Entries())
+        {
+           // tentry.State = EntityState.Added;
+            Console.WriteLine(tentry.State);
+            Console.WriteLine(tentry.OriginalValues["Name"]);
+            Console.WriteLine(tentry.CurrentValues["Name"]);
+        }
     }
 
     private static void EagerLoading(ShopDatabaseContext context)

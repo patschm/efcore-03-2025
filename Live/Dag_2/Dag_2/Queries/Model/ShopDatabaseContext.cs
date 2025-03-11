@@ -29,6 +29,8 @@ public partial class ShopDatabaseContext : DbContext
     {
         modelBuilder.HasDefaultSchema("Core");
 
+        modelBuilder.Entity<ProductGroup>().Property(p => p.Timestamp).IsRowVersion();
+
         // QueryFilter
         //modelBuilder.Entity<ProductGroup>().HasQueryFilter(g => g.Name.StartsWith("M"));
     }

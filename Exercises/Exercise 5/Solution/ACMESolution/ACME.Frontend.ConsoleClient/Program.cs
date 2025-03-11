@@ -12,8 +12,8 @@ internal class Program
     
     static void Main()
     {
-        //Exercise1();
-        Exercise2();
+        Exercise1();
+        //Exercise2();
         //Exercise3();
         //Exercise4();
         //Exercise5();
@@ -91,7 +91,7 @@ internal class Program
 
         var query = from p in ctx.Products
                     join b in ctx.Brands on p.BrandId equals b.Id
-                    select (new { BrandName = b.Name, ProductName = p.Name });
+                    select new { BrandName = b.Name, ProductName = p.Name };
         query = query.Take(20);
 
         foreach(var item in query)

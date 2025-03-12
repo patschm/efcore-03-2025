@@ -18,11 +18,11 @@ internal class Program
 
     static void Main(string[] args)
     {
-        Simple();
+        //Simple();
         //Extensions();
         //Events();
         //DiagnosticListeners();
-        //Interceptors();
+        Interceptors();
     }
 
     private static void Simple()
@@ -32,9 +32,9 @@ internal class Program
         // Add Simple logging
         optionsBuilder.LogTo(m => Console.WriteLine(m), LogLevel.Information);
         //optionsBuilder.LogTo(m => Console.WriteLine(m),
-        //    (eventid, loglevel) => loglevel == LogLevel.Information 
-        //        || eventid == RelationalEventId.ConnectionOpened);
-        // Sensitive data as well
+        //    (eventid, loglevel) => loglevel == LogLevel.Information
+        //        && eventid == RelationalEventId.ConnectionOpened);
+        //Sensitive data as well
         optionsBuilder.EnableSensitiveDataLogging(true);
         // Detail Information on errors
         optionsBuilder.EnableDetailedErrors();

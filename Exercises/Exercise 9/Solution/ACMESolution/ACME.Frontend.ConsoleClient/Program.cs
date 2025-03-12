@@ -15,8 +15,8 @@ internal class Program
 
     static void Main()
     {
-        Exercise1();
-        //Exercise2();
+        //Exercise1();
+        Exercise2();
     }
     private static void Exercise1()
     {

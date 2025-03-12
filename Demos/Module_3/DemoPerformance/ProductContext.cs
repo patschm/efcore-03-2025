@@ -26,10 +26,10 @@ public class ProductContext : DbContext
     public DbSet<ExpertReview> ExpertReviews => Set<ExpertReview>();
     public DbSet<WebReview> WebReviews => Set<WebReview>();
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer(Program.connectionString);
-    }
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    optionsBuilder.UseSqlServer(Program.connectionString);
+    //}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("Core");

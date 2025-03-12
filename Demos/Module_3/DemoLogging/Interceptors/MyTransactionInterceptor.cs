@@ -5,6 +5,7 @@ namespace DemoLogging.Interceptors;
 
 public class MyTransactionInterceptor: DbTransactionInterceptor
 {
+    
     public override DbTransaction TransactionStarted(DbConnection connection, TransactionEndEventData eventData, DbTransaction result)
     {
         Console.WriteLine("We started a transaction...");

@@ -14,6 +14,7 @@ internal class Program
 
     static void Main(string[] args)
     {
+        //Valkuil();
         //Diagnostics();
         //ConnectionPooling();
         //CompiledModels();
@@ -21,6 +22,33 @@ internal class Program
         BenchmarkSwitcher.FromTypes([typeof(BenchMarking)]).RunAll();
 
         //PerformanceCounters();
+
+    }
+
+    private static void Valkuil()
+    {
+        var prices = GetData();
+        //Console.WriteLine(prices.Count);
+
+        foreach (var price in prices.Take(5))
+        {
+        
+
+            Console.WriteLine(price.ProductId);
+        }
+        
+    }
+
+    private static IQueryable<Price> GetData()
+    //private static IEnumerable<Price> GetData()
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<ProductContext>();
+        optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
+        var options = optionsBuilder.Options;
+        var context = new ProductContext(options);
+
+        return context.Prices;
 
     }
 
@@ -41,6 +69,7 @@ internal class Program
     {
         var optionsBuilder = new DbContextOptionsBuilder<ProductContext>();
         optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
         var options = optionsBuilder.Options;
         var context = new ProductContext(options);

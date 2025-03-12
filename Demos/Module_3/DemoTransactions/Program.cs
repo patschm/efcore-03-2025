@@ -17,8 +17,8 @@ internal class Program
         //MultiContexts();
         //MixedLocalTransactions();
        //DistributedTransactions();
-        //SavePoints();
-        Isolations();
+        SavePoints();
+       // Isolations();
     }
 
     private static void LocalTransactions()
@@ -329,7 +329,7 @@ internal class Program
         });
 
         var readData = Task.Run(() => {
-            var isoLevel = System.Data.IsolationLevel.Ser;
+            var isoLevel = System.Data.IsolationLevel.RepeatableRead;
             using var readTransaction = context1.Database.BeginTransaction(isoLevel);
             var query = context1.Brands.Where(b=>b.Id > 50).AsNoTracking();
 

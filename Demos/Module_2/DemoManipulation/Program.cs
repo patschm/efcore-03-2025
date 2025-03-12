@@ -13,7 +13,7 @@ internal class Program
     {
         //ChangeTracker();
         //ChangeTrackerV80();
-        Insert();
+        //Insert();
         //Update();
         //UpdateV70();
         //Delete();
@@ -189,8 +189,17 @@ internal class Program
 
         context = new ProductContext(optionsBuilder.Options);
         
-        brand = context.Brands.First();
+        brand = context.Brands.Include(b=>b.Products).First();
+        var eb = context.Entry(brand);
+
         context.Remove(brand);
+        Console.WriteLine($"Merk: {eb.State}");
+
+        foreach(var p in brand.Products)
+        {
+            Console.WriteLine(context.Entry(p).State);
+        }
+        
         context.SaveChanges();
     }
 
@@ -213,7 +222,12 @@ internal class Program
         //}
         //catch (DbUpdateConcurrencyException ex)
         //{
-        //    ex.Entries
+        //    foreach (var enrty in ex.Entries)
+        //    {
+
+        //        //enrty.GetDatabaseValues
+        //    }
+        //    //Console.WriteLine("Ooops");
         //}
 
         for (int i = 0; i < 3; i++)
@@ -229,13 +243,17 @@ internal class Program
                 foreach (var entry in duc.Entries)
                 {
                     var myValues = entry.CurrentValues;
+                    var origValue = entry.OriginalValues;
                     var dbValues = entry.GetDatabaseValues()!;
-                    Console.WriteLine($"In database: {dbValues["Name"]}. Your value: {myValues["Name"]}");
-                    // Database Wins
-                    //entry.CurrentValues.SetValues(dbValues);
+                    Console.WriteLine($"In database: {dbValues["Name"]}. Your value: {myValues["Name"]} (Was {origValue["Name"]})");
                     
-                    // Client wins
+                    // Client wins (and database wins)
                     entry.OriginalValues.SetValues(dbValues);
+
+                    // Database Wins
+                    entry.CurrentValues.SetValues(dbValues);
+                    //break; // Geen SaveChanges. Houd in dit geval rekening met de original values (die alleen met SaveChanges wordt geupdate)
+
                 }
             }
         }

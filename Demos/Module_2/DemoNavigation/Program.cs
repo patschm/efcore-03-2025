@@ -93,6 +93,8 @@ internal class Program
 
         var context = new ProductContext(optionsBuilder.Options);
 
+        //context
+
         var query = context.ProductGroups
             .Include(pg => pg.Products)
                 .ThenInclude(p => p.Brand)

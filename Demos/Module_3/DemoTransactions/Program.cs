@@ -126,6 +126,8 @@ internal class Program
         // a different transaction manager on each platform.
         // Distributed Transactions will be supported in EF 7 and .NET 7 but only for the Windows platform
 
+        TransactionManager.ImplicitDistributedTransactions = true;
+
         var optionsBuilder = new DbContextOptionsBuilder();
         optionsBuilder.UseSqlServer(connectionString);
         var context = new ProductContext(optionsBuilder.Options);
@@ -145,6 +147,9 @@ internal class Program
             context.Brands.Add(brand1);
             context.Brands.Add(brand2);
             context.SaveChanges();
+
+            brand1 = new Brand { Name = "Brand 1", Website = "https://www.brand_1.nl" };
+            brand2 = new Brand { Name = "Brand 2", Website = "https://www.brand_2.nl" };
 
             context2.Brands.Add(brand1);
             context2.Brands.Add(brand2);
@@ -206,8 +211,8 @@ internal class Program
         // 1) Dirty Reads. Reading uncommited data
         // 2) Non-repeatable reads. Same query returns different results
         // 3) Phantom Reads. New rows are added or removed by another transaction to the records being read.
-        //DirtyReads();
-        //NonRepeatableReads();
+       // DirtyReads();
+       //NonRepeatableReads();
         PhantomReads();
 
         Console.ReadLine();
@@ -220,20 +225,20 @@ internal class Program
         var context2 = new ProductContext(optionsBuilder.Options);
 
         // Set the isolation level
-        var isoLevel = System.Data.IsolationLevel.ReadUncommitted;
+        var isoLevel = System.Data.IsolationLevel.ReadCommitted;
 
         using var readTransaction = context1.Database.BeginTransaction(isoLevel);
         using var writeTransaction = context2.Database.BeginTransaction();
 
         var writeAction = new Task(() => {
-            var brand = new Brand { Name = "Brand 1", Website = "https://www.brand_2.nl" };
+            var brand = new Brand { Name = "Brand 1111", Website = "https://www.brand_2.nl" };
             context2.Brands.Add(brand);
             context2.SaveChanges();
 
             Console.WriteLine("Waiting 1 seconds for commit");
             Task.Delay(1000).Wait();
 
-            writeTransaction.Commit();
+            writeTransaction.Rollback();
         });
 
         var readData = Task.Run(() => {
@@ -275,11 +280,13 @@ internal class Program
             using var writeTransaction = context2.Database.BeginTransaction();
             brand.Name = "Brand 2";
             context2.SaveChanges();
+            
             writeTransaction.Commit();
+            Console.WriteLine("Gecommitteerd");
         });
 
         var readData = Task.Run(() => {
-            var isoLevel = System.Data.IsolationLevel.ReadCommitted;
+            var isoLevel = System.Data.IsolationLevel.RepeatableRead;
             using var readTransaction = context1.Database.BeginTransaction(isoLevel);
             var query = context1.Brands.AsNoTracking();
 
@@ -289,7 +296,7 @@ internal class Program
             }
             modifyData.Start();
 
-            Task.Delay(1000).Wait();
+            Task.Delay(5000).Wait();
             Console.WriteLine("==== Read again");
             foreach (var b in query)
             {
@@ -298,9 +305,9 @@ internal class Program
             readTransaction.Commit();
         });
 
-        Task.Delay(5000).Wait();
+        Task.Delay(10000).Wait();
         context2.Remove(brand);
-        context2.SaveChanges();
+       context2.SaveChanges();
     }
     private static void PhantomReads()
     {
@@ -311,7 +318,7 @@ internal class Program
         
         var insertData = new Task(() => {
             using var writeTransaction = context2.Database.BeginTransaction();
-            var brand = new Brand { Name = "Brand 1", Website = "https://www.brand_1.nl" };
+            var brand = new Brand { Name = "Phantom 1", Website = "https://www.brand_1.nl" };
             context2.Brands.Add(brand);
             context2.SaveChanges();
             writeTransaction.Commit();
@@ -322,7 +329,7 @@ internal class Program
         });
 
         var readData = Task.Run(() => {
-            var isoLevel = System.Data.IsolationLevel.RepeatableRead;
+            var isoLevel = System.Data.IsolationLevel.Ser;
             using var readTransaction = context1.Database.BeginTransaction(isoLevel);
             var query = context1.Brands.Where(b=>b.Id > 50).AsNoTracking();
 

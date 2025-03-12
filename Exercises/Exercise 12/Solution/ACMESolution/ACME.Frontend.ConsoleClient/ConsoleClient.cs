@@ -33,7 +33,7 @@ internal class ConsoleClient : IHostedService
                        BoolValue = s.BoolValue,
                        NumberValue = s.NumberValue
                    })
-                .Where(p => p.ProductId == 1)
+                .Where(p => p.ProductId == id)
                 .Select(p=>p)
         );
 
